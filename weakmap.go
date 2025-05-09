@@ -51,3 +51,8 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 		m.cache.CompareAndDelete(key, iwp)
 	}
 }
+
+// Clear removes all entries from the cache.
+func (m *Map[K, V]) Clear() {
+	m.cache.Clear()
+}
