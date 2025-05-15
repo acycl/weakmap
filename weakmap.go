@@ -22,8 +22,8 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 
 	var v *V
 	for {
-		iwp, ok := m.cache.Load(key)
-		if !ok {
+		iwp, loaded := m.cache.Load(key)
+		if !loaded {
 
 			// Only create a new value once.
 			if v == nil {
@@ -35,8 +35,8 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 			}
 
 			wp := weak.Make(v)
-			iwp, ok = m.cache.LoadOrStore(key, wp)
-			if ok {
+			iwp, loaded = m.cache.LoadOrStore(key, wp)
+			if !loaded {
 				runtime.AddCleanup(v, func(key K) {
 					m.cache.CompareAndDelete(key, wp)
 				}, key)
@@ -50,9 +50,4 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 
 		m.cache.CompareAndDelete(key, iwp)
 	}
-}
-
-// Clear removes all entries from the cache.
-func (m *Map[K, V]) Clear() {
-	m.cache.Clear()
 }
