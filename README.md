@@ -11,14 +11,14 @@ given a key.
 
 ```go
 m := Map[int, string]{
-    New: func(key int) (*string, error) {
+    New: func(key int) *string {
         value := strconv.Itoa(key)
-        return &value, nil
+        return &value
     },
 }
 
 k := 1
-v, err := m.Load(k) // *v == "1", err == nil
+v := m.Load(k) // *v == "1"
 ```
 
 Instances are safe for concurrent use but should not be copied.

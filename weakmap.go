@@ -10,14 +10,14 @@ import (
 )
 
 type Map[K comparable, V any] struct {
-	New   func(K) (*V, error)
+	New   func(K) *V
 	cache sync.Map
 }
 
 // Load retrieves a value from the cache.
-func (m *Map[K, V]) Load(key K) (*V, error) {
+func (m *Map[K, V]) Load(key K) *V {
 	if m.New == nil {
-		return nil, nil
+		return nil
 	}
 
 	var v *V
@@ -27,11 +27,7 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 
 			// Only create a new value once.
 			if v == nil {
-				var err error
-				v, err = m.New(key)
-				if err != nil {
-					return nil, err
-				}
+				v = m.New(key)
 			}
 
 			wp := weak.Make(v)
@@ -40,12 +36,12 @@ func (m *Map[K, V]) Load(key K) (*V, error) {
 				runtime.AddCleanup(v, func(key K) {
 					m.cache.CompareAndDelete(key, wp)
 				}, key)
-				return v, nil
+				return v
 			}
 		}
 
 		if v := iwp.(weak.Pointer[V]).Value(); v != nil {
-			return v, nil
+			return v
 		}
 
 		m.cache.CompareAndDelete(key, iwp)
