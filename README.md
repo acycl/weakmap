@@ -1,5 +1,7 @@
 # weakmap
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/acycl/weakmap.svg)](https://pkg.go.dev/github.com/acycl/weakmap)
+
 A generic cache map implementation with [weak
 pointers](https://pkg.go.dev/weak#Pointer) as described [on the Go
 blog](https://go.dev/blog/cleanups-and-weak#weak-pointers).
